@@ -1,4 +1,4 @@
-import { IconMetaData, FileExtensions, FileMetaData } from "api";
+import { IconMetaData, FileExtensions, FileMetaData } from "../types/api";
 
 export function isUri(src: string): boolean {
   return src.startsWith("data:");

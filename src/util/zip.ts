@@ -1,6 +1,6 @@
 import archiver from "archiver";
 import axios from "axios";
-import { IconMetaData, FileExtensions, FileMetaData } from "api";
+import { IconMetaData, FileExtensions, FileMetaData } from "../types/api";
 import {
   isUri,
   isHttp,
