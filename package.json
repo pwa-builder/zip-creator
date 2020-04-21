@@ -6,6 +6,7 @@
   "license": "MIT",
   "author": "Microsoft",
   "main": "dist/app.js",
+  "types": "types/app.js",
   "scripts": {
     "start": "npm run serve",
     "build": "npm run build-ts && npm run lint",
