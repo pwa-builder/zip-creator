@@ -1,6 +1,7 @@
 "use strict";
 
 import { Response, Request } from "express";
+import logger from "../util/logger";
 import Zip from "../util/zip";
 /**
  * GET /api
@@ -25,8 +26,8 @@ export const postApi = async (req: Request, res: Response) => {
     const zip = await Zip.generate(req.body);
 
     if (!zip) {
-      // error handling
       res.status(400);
+      logger.error("zip not created");
     } else {
       res
         .status(200)
@@ -41,5 +42,6 @@ export const postApi = async (req: Request, res: Response) => {
     }
   } catch (error) {
     res.sendStatus(500);
+    logger.error(error);
   }
 };
