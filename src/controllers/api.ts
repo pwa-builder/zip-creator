@@ -35,14 +35,13 @@ export const postApi = async (req: Request, res: Response) => {
       logger.error("zip not created", res);
     } else {
       res
-        .status(200)
         .header({
           "Content-Type": "application/zip",
           "Content-Disposition": "attachment; filename=pwa_icons.zip",
         })
-        .attachment("pwa-icons.zip")
-        .pipe(zip);
-      res.end();
+        .attachment("pwa-icons.zip");
+      zip.pipe(res);
+      zip.finalize();
       logger.info("zip created successfully", res);
     }
   } catch (error) {
