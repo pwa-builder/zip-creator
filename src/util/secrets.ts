@@ -21,16 +21,3 @@ if (!SESSION_SECRET) {
   logger.error("No client secret. Set SESSION_SECRET environment variable.");
   process.exit(1);
 }
-
-if (!MONGODB_URI) {
-  if (prod) {
-    logger.error(
-      "No mongo connection string. Set MONGODB_URI environment variable."
-    );
-  } else {
-    logger.error(
-      "No mongo connection string. Set MONGODB_URI_LOCAL environment variable."
-    );
-  }
-  process.exit(1);
-}
