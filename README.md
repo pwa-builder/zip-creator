@@ -205,15 +205,11 @@ The full folder structure of this app is explained below:
 | **src**                  | Contains your source code that will be compiled to the dist dir                               |
 | **src/config**           | Passport authentication strategies and login middleware. Add other complex config code here   |
 | **src/controllers**      | Controllers define functions that respond to various http requests                            |
-| **src/models**           | Models define Mongoose schemas that will be used in storing and retrieving data from MongoDB  |
-| **src/public**           | Static assets that will be used client side                                                   |
 | **src/types**            | Holds .d.ts files not found on DefinitelyTyped. Covered more in this [section](#type-definition-dts-files)          |
 | **src**/server.ts        | Entry point to your express app                                                               |
 | **test**                 | Contains your tests. Separate from source because there is a different build process.         |
-| **views**                | Views define how your app renders on the client. In this case we're using pug                 |
 | .env.example             | API keys, tokens, passwords, database URI. Clone this, but don't check it in to public repos. |
 | .travis.yml              | Used to configure Travis CI build                                                             |
-| .copyStaticAssets.ts     | Build script that copies images, fonts, and JS libs to the dist folder                        |
 | jest.config.js           | Used to configure Jest running tests written in TypeScript                                    |
 | package.json             | File that contains npm dependencies as well as [build scripts](#what-if-a-library-isnt-on-definitelytyped)                          |
 | tsconfig.json            | Config settings for compiling server code written in TypeScript                               |
@@ -295,10 +291,7 @@ Below is a list of all the scripts this template has available:
 | `watch-test`              | Runs tests in watch mode                                                                          |
 | `build-ts`                | Compiles all source `.ts` files to `.js` files in the `dist` folder                                 |
 | `watch-ts`                | Same as `build-ts` but continuously watches `.ts` files and re-compiles when needed                |
-| `build-sass`              | Compiles all `.scss` files to `.css` files                                                          |
-| `watch-sass`              | Same as `build-sass` but continuously watches `.scss` files and re-compiles when needed            |
 | `lint`                    | Runs ESLint on project files                                                                       |
-| `copy-static-assets`      | Calls script that copies JS libs, fonts, and images to dist directory                             |
 | `debug`                   | Performs a full build and then serves the app in watch mode                                       |
 | `serve-debug`             | Runs the app with the --inspect flag                                                               |
 | `watch-debug`             | The same as `watch` but includes the --inspect flag so you can attach a debugger                   |
@@ -314,7 +307,6 @@ Making sure that your `.d.ts` files are setup correctly is super important becau
 ### Installing `.d.ts` files from DefinitelyTyped
 For the most part, you'll find `.d.ts` files for the libraries you are using on DefinitelyTyped.
 These `.d.ts` files can be easily installed into your project by using the npm scope `@types`.
-For example, if we want the `.d.ts` file for jQuery, we can do so with `npm install --save-dev @types/jquery`.
 
 > **Note!** Be sure to add `--save-dev` (or `-D`) to your `npm install`. `.d.ts` files are project dependencies, but only used at compile time and thus should be dev dependencies.
 
@@ -517,7 +509,6 @@ In that file you'll find two sections:
 | ------------------------------- | --------------------------------------------------------------------- |
 | async                           | Utility library that provides asynchronous control flow.               |
 | bcrypt-nodejs                   | Library for hashing and salting user passwords.                       |
-| bluebird                        | Promise library                                                       |
 | body-parser                     | Express 4 middleware.                                                 |
 | compression                     | Express 4 middleware.                                                 |
 | connect-mongo                   | MongoDB session store for Express.                                    |
