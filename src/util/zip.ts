@@ -100,7 +100,7 @@ export async function generate(
       continue;
     }
   }
-
+  await archive.finalize();
   if (count > 0) {
     return archive;
   }
