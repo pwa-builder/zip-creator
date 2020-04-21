@@ -13,6 +13,5 @@
       "*": ["node_modules/*"]
     }
   },
-  "include": ["src/**/*"],
-  "references": [{ "path": "src/types/*", "prepend": true }]
+  "include": ["src/**/*", "@types/src"]
 }
