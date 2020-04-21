@@ -19,7 +19,7 @@ const supportedImageTypes = new Set([...Object.keys(FileExtensions)]);
 async function parseMetaData({ src }: IconMetaData): Promise<FileMetaData> {
   let mimeType;
   let encodingString;
-  let encoding;
+  let encoding: BufferEncoding;
   let data;
 
   if (isHttp(src)) {
