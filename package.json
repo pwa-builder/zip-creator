@@ -12,7 +12,7 @@
     "serve": "node dist/server.js",
     "watch-node": "nodemon dist/server.js",
     "watch": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"npm run watch-ts\" \"npm run watch-node\"",
-    "test": "jest --forceExit --coverage --verbose",
+    "test": "jest",
     "watch-test": "npm run test -- --watchAll",
     "build-ts": "tsc",
     "watch-ts": "tsc -w",
@@ -62,7 +62,6 @@
     "jest": "^24.9.0",
     "nodemon": "^1.19.2",
     "supertest": "^4.0.2",
-    "ts-jest": "^24.1.0",
     "ts-node": "^8.4.1",
     "typescript": "^3.6.3"
   }
