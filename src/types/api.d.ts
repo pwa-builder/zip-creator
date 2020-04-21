@@ -1,17 +1,17 @@
-export interface IconMetaData {
+declare interface IconMetaData {
   src: string;
   generated?: boolean;
   type?: string;
   sizes: string;
 }
 
-export interface FileMetaData {
+declare interface FileMetaData {
   mimeType: SupportedTypes;
   encoding: BufferEncoding;
   data?: string;
 }
 
-export enum SupportedTypes {
+declare enum SupportedTypes {
   jpeg = "image/jpeg",
   bmp = "image/bmp",
   gif = "image/gif",
@@ -21,7 +21,7 @@ export enum SupportedTypes {
   msico = "image/vnd.microsoft.icon",
 }
 
-export enum FileExtensions {
+declare enum FileExtensions {
   "image/jpeg" = "jpeg",
   "image/bmp" = "bmp",
   "image/gif" = "git",
