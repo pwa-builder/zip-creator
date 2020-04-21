@@ -1,13 +1,6 @@
-# TypeScript Node Starter
+# Azure Exppress Zip Creator
 
-[![Dependency Status](https://david-dm.org/Microsoft/TypeScript-Node-Starter.svg)](https://david-dm.org/Microsoft/TypeScript-Node-Starter) [![Build Status](https://travis-ci.org/Microsoft/TypeScript-Node-Starter.svg?branch=master)](https://travis-ci.org/Microsoft/TypeScript-Node-Starter)
-
-**Live Demo**: [https://typescript-node-starter.azurewebsites.net/](https://typescript-node-starter.azurewebsites.net/)
-
-![image](https://user-images.githubusercontent.com/820883/36764267-abbdb7f8-1be0-11e8-9678-2a9ea448d7f8.png)
-
-The main purpose of this repository is to show a good end-to-end project setup and workflow for writing Node code in TypeScript.
-We will try to keep this as up-to-date as possible, but community contributions and recommendations for improvements are encouraged and will be most welcome.
+This is a stripped down version of the [Typescript Node Starter](https://github.com/microsoft/TypeScript-Node-Starter) by Microsoft. This is intended for deployment in a Azure App Service application. This is stripped so that it functions purely as an api for the creation of zip files from data uris or urls.
 
 # Table of contents:
 
