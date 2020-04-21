@@ -23,6 +23,11 @@ export const getApi = (req: Request, res: Response) => {
  */
 export const postApi = async (req: Request, res: Response) => {
   try {
+    if (!req.body) {
+      res.sendStatus(400);
+      return;
+    }
+
     const zip = await Zip.generate(req.body);
 
     if (!zip) {
@@ -37,7 +42,6 @@ export const postApi = async (req: Request, res: Response) => {
         })
         .attachment("pwa-icons.zip")
         .pipe(zip);
-      await zip.finalize();
       res.end();
       logger.info("zip created successfully", res);
     }
