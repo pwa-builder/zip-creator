@@ -1,4 +1,4 @@
-import { IconMetaData, FileMetaData, FileExtensions } from "./zip";
+import { IconMetaData, FileMetaData, FileExtensions } from "./zip-types";
 
 export function isUri(src: string): boolean {
   return src.startsWith("data:");
