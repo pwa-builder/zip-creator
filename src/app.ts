@@ -43,6 +43,7 @@ app.use((req: Request, res: Response, next) => {
 /**
  * API examples routes.
  */
-app.get("/api", apiController.getApi);
+// app.get("/api", apiController.getApi);
+app.post("/api", apiController.postApi);
 
 export default app;
