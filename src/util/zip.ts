@@ -7,9 +7,7 @@ import {
   generateFilename,
   encodingGuard,
 } from "./zip-utils";
-
-const supportedImageTypes = new Set([...Object.keys(FileExtensions)]);
-
+import { IconMetaData, FileMetaData, supportedImageTypes } from "./zip-types";
 /*
   Normalizes the data for easy consumption of the lower level.
     - If the uri is a http then makes a HEAD request to retrieve the content-type.
