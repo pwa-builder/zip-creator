@@ -27,7 +27,7 @@ export const postApi = async (req: Request, res: Response) => {
 
     if (!zip) {
       res.status(400);
-      logger.error("zip not created");
+      logger.error("zip not created", res);
     } else {
       res
         .status(200)
@@ -39,6 +39,7 @@ export const postApi = async (req: Request, res: Response) => {
         .pipe(zip);
       await zip.finalize();
       res.end();
+      logger.info("zip created successfully", res);
     }
   } catch (error) {
     res.sendStatus(500);
