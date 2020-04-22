@@ -26,7 +26,7 @@ export const getApi = (req: Request, res: Response) => {
 export const postApi = async (req: Request, res: Response) => {
   try {
     if (!req.body) {
-      res.status(400).send("no request body found");
+      res.status(400).json({message:"no request body found"});
       return;
     }
 
@@ -57,7 +57,9 @@ export const postApi = async (req: Request, res: Response) => {
       if (!res.writableFinished) {
         res.download(fileLoc, "pwa_icon.zip", (err) => {
           if (err) {
-            res.status(400);
+            res
+              .status(400)
+              .json({ message: "file failed to send"});
             logger.error("file failed to send: " + err.message);
           }
         });
@@ -70,11 +72,11 @@ export const postApi = async (req: Request, res: Response) => {
     const fileCreated = await Zip.generate(zipStream, archive, req.body);
 
     if (!fileCreated) {
-      res.status(400).send("zip was not created");
+      res.status(400).json({message: "zip was not created"});
       logger.error("zip not created"); //, res);
     }
   } catch (error) {
-    res.status(500).send("internal server error");
+    res.status(500).json({message: "internal server error"});
     logger.error("500 error path", res, error);
   }
 };
