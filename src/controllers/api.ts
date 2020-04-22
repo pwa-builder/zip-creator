@@ -34,7 +34,7 @@ export const postApi = async (req: Request, res: Response) => {
     /*
       Create file and zip, set it up to stream files to,
     */
-    const fileLoc = path.resolve(__dirname /*tmpdir()*/, `${hash()}.zip`);
+    const fileLoc = path.resolve(process.cwd(), "public", `${hash()}.zip`);
     logger.info(fileLoc);
     const zipStream = fs.createWriteStream(fileLoc);
     const archive = archiver("zip", {
@@ -47,9 +47,9 @@ export const postApi = async (req: Request, res: Response) => {
     */
     // delete the file when the server is finished responding.
     res.on("close", () => {
-      // fs.unlink(fileLoc, (err) => {
-      //   logger.error(err);
-      // });
+      fs.unlink(fileLoc, (err) => {
+        logger.error(err);
+      });
     });
 
     // When the stream finishes and a response has not been sent (i.e. no errors), send the document.
