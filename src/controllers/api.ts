@@ -1,4 +1,3 @@
-import { tmpdir } from "os";
 import * as fs from "fs";
 import archiver from "archiver";
 import * as path from "path";
@@ -34,7 +33,8 @@ export const postApi = async (req: Request, res: Response) => {
     /*
       Create file and zip, set it up to stream files to,
     */
-    const fileLoc = path.resolve(process.cwd(), "public", `${hash()}.zip`);
+    const rootPath = (process.cwd().endsWith("azure-express-zip-creator")) ? process.cwd(): path.resolve(__dirname, "../../");
+    const fileLoc = path.resolve(rootPath, "public", `${hash()}.zip`);
     logger.info(fileLoc);
     const zipStream = fs.createWriteStream(fileLoc);
     const archive = archiver("zip", {
