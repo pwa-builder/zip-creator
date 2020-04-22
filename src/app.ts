@@ -13,7 +13,8 @@ import * as apiController from "./controllers/api";
 const app = express();
 
 // Express configuration
-app.set("port", process.env.PORT || 3000);
+app.set("port", 8080);
+// app.set("port", process.env.PORT || 6000);
 app.use(compression());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -24,9 +25,10 @@ app.use(
     secret: SESSION_SECRET,
   })
 );
-app.use(flash());
-app.use(lusca.xframe("SAMEORIGIN"));
-app.use(lusca.xssProtection(true));
+// security need to add back in
+// app.use(flash());
+// app.use(lusca.xframe("SAMEORIGIN"));
+// app.use(lusca.xssProtection(true));
 app.use((req, res, next) => {
   next();
 });
