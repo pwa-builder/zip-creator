@@ -1,10 +1,10 @@
 import express, { Response, Request } from "express";
 import compression from "compression"; // compresses requests
-import session from "express-session";
+// import session from "express-session";
 import bodyParser from "body-parser";
-import lusca from "lusca";
-import flash from "express-flash";
-import { SESSION_SECRET } from "./util/secrets";
+// import lusca from "lusca";
+// import flash from "express-flash";
+// import { SESSION_SECRET } from "./util/secrets";
 
 // Controllers (route handlers)
 import * as apiController from "./controllers/api";
@@ -14,7 +14,7 @@ const app = express();
 
 // Express configuration
 app.set("port", 8080);
-// app.set("port", process.env.PORT || 6000);
+// app.set("port", process.env.PORT || 3000);
 app.use(compression());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
