@@ -69,7 +69,6 @@ async function getData(
   Does not kill the archive reference here, needs to be done in the calling function.
 */
 export async function generate(
-  fileStream: fs.WriteStream,
   zip: archiver.Archiver,
   icons: IconMetaData[]
 ): Promise<boolean> {
