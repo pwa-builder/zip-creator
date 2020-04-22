@@ -13,7 +13,7 @@ import * as apiController from "./controllers/api";
 const app = express();
 
 // Express configuration
-app.set("port", 8080);
+app.set("port", 8000);
 // app.set("port", process.env.PORT || 3000);
 app.use(compression());
 app.use(bodyParser.json());
