@@ -28,6 +28,9 @@ export const postApi = async (req: Request, res: Response) => {
     if (!req.body) {
       res.status(400).json({message:"no request body found"});
       return;
+    } else if (!Array.isArray(req.body)) {
+      res.status(400).json({message:"no request body is not an array of objects"});
+      return;
     }
 
     /*
@@ -48,7 +51,11 @@ export const postApi = async (req: Request, res: Response) => {
     // delete the file when the server is finished responding.
     res.on("close", () => {
       fs.unlink(fileLoc, (err) => {
-        logger.error(err);
+        if (err) {
+          logger.error(`error while unlinking occurred: ${err && err.message}`);
+        } else {
+          logger.info("successful file handoff");
+        }
       });
     });
 
@@ -60,7 +67,7 @@ export const postApi = async (req: Request, res: Response) => {
             res
               .status(400)
               .json({ message: "file failed to send"});
-            logger.error("file failed to send: " + err.message);
+            logger.error(`file failed to send: ${err.message}`);
           }
         });
       }
@@ -69,7 +76,7 @@ export const postApi = async (req: Request, res: Response) => {
     /*
       Adding files to the zip.
     */
-    const fileCreated = await Zip.generate(zipStream, archive, req.body);
+    const fileCreated = await Zip.generate(archive, req.body);
 
     if (!fileCreated) {
       res.status(400).json({message: "zip was not created"});
