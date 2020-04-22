@@ -1,3 +1,4 @@
+import * as fs from "fs";
 import archiver from "archiver";
 import axios from "axios";
 import {
@@ -8,6 +9,7 @@ import {
   encodingGuard,
 } from "./zip-utils";
 import { IconMetaData, FileMetaData, supportedImageTypes } from "./zip-types";
+import logger from "./logger";
 /*
   Normalizes the data for easy consumption of the lower level.
     - If the uri is a http then makes a HEAD request to retrieve the content-type.
@@ -33,7 +35,7 @@ async function parseMetaData({ src }: IconMetaData): Promise<FileMetaData> {
 }
 
 /*
-  Http fetch from url, throws errors to a higher level for handling.
+  Http fetch from url, throws errors to a higher level for handling, and skips the image.
 */
 async function fetchHttp(url: string): Promise<Buffer> {
   const response = await axios
@@ -55,7 +57,7 @@ async function getData(
   { src }: IconMetaData,
   { encoding, data }: FileMetaData
 ): Promise<Buffer> {
-  if (data && isUri(data)) {
+  if (isUri(src)) {
     return Buffer.from(data, encoding);
   } else if (isHttp(src)) {
     return fetchHttp(src);
@@ -67,11 +69,15 @@ async function getData(
   Does not kill the archive reference here, needs to be done in the calling function.
 */
 export async function generate(
+  filepath: string,
   icons: IconMetaData[]
-): Promise<archiver.Archiver> {
+): Promise<boolean> {
+  const zipFile = fs.createWriteStream(filepath);
   const archive = archiver("zip", {
     zlib: { level: 9 }, // file compression level, probably needs tweaking
   });
+
+  archive.pipe(zipFile);
 
   let index = 0;
   const length = icons.length;
@@ -81,13 +87,13 @@ export async function generate(
       const metadata = icons[index];
       const fileMetaData = await parseMetaData(metadata);
       if (!supportedImageTypes.has(fileMetaData.mimeType)) {
-        console.log("skipped", fileMetaData, fileMetaData.mimeType);
+        console.log("skipped");
+        // console.log("skipped", fileMetaData, fileMetaData.mimeType);
         continue; // Skip if the mimeType is not supported
       }
 
       const name = generateFilename(metadata, fileMetaData);
       const file = await getData(metadata, fileMetaData);
-      console.log(metadata, name, file, fileMetaData);
 
       archive.append(file, { name });
       count++;
@@ -97,11 +103,14 @@ export async function generate(
       continue;
     }
   }
+
+  archive.finalize();
+
   if (count > 0) {
-    return archive;
+    return true;
   }
 
-  return null;
+  return false;
 }
 
 export default {
