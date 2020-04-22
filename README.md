@@ -152,7 +152,6 @@ The full folder structure of this app is explained below:
 | **dist**            | Contains the distributable (or output) from your TypeScript build. This is the code you ship               |
 | **node_modules**    | Contains all your npm dependencies                                                                         |
 | **src**             | Contains your source code that will be compiled to the dist dir                                            |
-| **src/config**      | Passport authentication strategies and login middleware. Add other complex config code here                |
 | **src/controllers** | Controllers define functions that respond to various http requests                                         |
 | **src/types**       | Holds .d.ts files not found on DefinitelyTyped. Covered more in this [section](#type-definition-dts-files) |
 | **src**/server.ts   | Entry point to your express app                                                                            |
@@ -412,34 +411,10 @@ While Mocha is probably more common, Mocha seems to be looking for a new maintai
 To add TypeScript + Jest support, first install a few npm packages:
 
 ```
-npm install -D jest ts-jest
+npm install -D jest babel-jest @babel/core @babel/preset-env @babel/preset-typescript
 ```
 
-`jest` is the testing framework itself, and `ts-jest` is just a simple function to make running TypeScript tests a little easier.
-
-### Configure Jest
-
-Jest's configuration lives in `jest.config.js`, so let's open it up and add the following code:
-
-```js
-module.exports = {
-  globals: {
-    "ts-jest": {
-      tsConfigFile: "tsconfig.json",
-    },
-  },
-  moduleFileExtensions: ["ts", "js"],
-  transform: {
-    "^.+\\.(ts|tsx)$": "./node_modules/ts-jest/preprocessor.js",
-  },
-  testMatch: ["**/test/**/*.test.(ts|js)"],
-  testEnvironment: "node",
-};
-```
-
-Basically we are telling Jest that we want it to consume all files that match the pattern `"**/test/**/*.test.(ts|js)"` (all `.test.ts`/`.test.js` files in the `test` folder), but we want to preprocess the `.ts` files first.
-This preprocess step is very flexible, but in our case, we just want to compile our TypeScript to JavaScript using our `tsconfig.json`.
-This all happens in memory when you run the tests, so there are no output `.js` test files for you to manage.
+`jest` is the testing framework itself, babel transpilation for testing typescript files with jest. This only works for versions of babel 7+.
 
 ### Running tests
 
@@ -508,11 +483,6 @@ In that file you'll find two sections:
 | lodash            | General utility library.                                   |
 | lusca             | CSRF middleware.                                           |
 | nodemailer        | Node.js library for sending emails.                        |
-| passport          | Simple and elegant authentication library for node.js      |
-| passport-local    | Sign-in with Username and Password plugin.                 |
-| pug (jade)        | Template engine for Express.                               |
-| request           | Simplified HTTP request library.                           |
-| request-promise   | Promisified HTTP request library. Let's us use async/await |
 | winston           | Logging library                                            |
 
 ## `devDependencies`
@@ -526,7 +496,6 @@ In that file you'll find two sections:
 | node-sass    | Allows to compile .scss files to .css                                   |
 | nodemon      | Utility that automatically restarts node process when it crashes        |
 | supertest    | HTTP assertion library.                                                 |
-| ts-jest      | A preprocessor with sourcemap support to help use TypeScript with Jest. |
 | ts-node      | Enables directly running TS files. Used to run `copy-static-assets.ts`  |
 | eslint       | Linter for JavaScript and TypeScript files                              |
 | typescript   | JavaScript compiler/type checker that boosts JavaScript productivity    |
