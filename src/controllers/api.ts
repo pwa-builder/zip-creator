@@ -31,6 +31,9 @@ export const postApi = async (req: Request, res: Response) => {
       return;
     }
 
+    /*
+      Create file and zip, set it up to stream files to,
+    */
     const fileLoc = path.resolve(__dirname /*tmpdir()*/, `${hash()}.zip`);
     logger.info(fileLoc);
     const zipStream = fs.createWriteStream(fileLoc);
@@ -38,18 +41,32 @@ export const postApi = async (req: Request, res: Response) => {
       zlib: { level: 9 }, // file compression level, probably needs tweaking
     });
     archive.pipe(zipStream);
-    zipStream.on("finish", () => {
-      res.download(fileLoc, "pwa_icon.zip", (err) => {
-        if (err) {
-          res.status(400);
-          logger.error("file failed to send: " + err.message);
-        }
-        // fs.unlink(fileLoc, (err) => {
-        //   logger.error(err);
-        // });
-      });
+
+    /*
+      Event Listeners
+    */
+    // delete the file when the server is finished responding.
+    res.on("close", () => {
+      // fs.unlink(fileLoc, (err) => {
+      //   logger.error(err);
+      // });
     });
 
+    // When the stream finishes and a response has not been sent (i.e. no errors), send the document.
+    zipStream.on("finish", () => {
+      if (!res.writableFinished) {
+        res.download(fileLoc, "pwa_icon.zip", (err) => {
+          if (err) {
+            res.status(400);
+            logger.error("file failed to send: " + err.message);
+          }
+        });
+      }
+    });
+
+    /*
+      Adding files to the zip.
+    */
     const fileCreated = await Zip.generate(zipStream, archive, req.body);
 
     if (!fileCreated) {
