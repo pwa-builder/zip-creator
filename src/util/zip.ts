@@ -69,16 +69,10 @@ async function getData(
   Does not kill the archive reference here, needs to be done in the calling function.
 */
 export async function generate(
-  filepath: string,
+  fileStream: fs.WriteStream,
+  zip: archiver.Archiver,
   icons: IconMetaData[]
 ): Promise<boolean> {
-  const zipFile = fs.createWriteStream(filepath);
-  const archive = archiver("zip", {
-    zlib: { level: 9 }, // file compression level, probably needs tweaking
-  });
-
-  archive.pipe(zipFile);
-
   let index = 0;
   const length = icons.length;
   let count = 0;
@@ -95,7 +89,7 @@ export async function generate(
       const name = generateFilename(metadata, fileMetaData);
       const file = await getData(metadata, fileMetaData);
 
-      archive.append(file, { name });
+      zip.append(file, { name });
       count++;
     } catch (err) {
       // ignore errors form other services for now
@@ -104,7 +98,7 @@ export async function generate(
     }
   }
 
-  archive.finalize();
+  zip.finalize();
 
   if (count > 0) {
     return true;
