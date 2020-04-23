@@ -10,7 +10,7 @@ import Zip from "../util/zip";
  * List of API examples.
  */
 export const getApi = (req: Request, res: Response) => {
-  res.json({});
+  res.status(200).json({});
 };
 
 /**
