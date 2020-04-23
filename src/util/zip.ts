@@ -1,4 +1,3 @@
-import * as fs from "fs";
 import archiver from "archiver";
 import axios from "axios";
 import {
@@ -15,7 +14,7 @@ import logger from "./logger";
     - If the uri is a http then makes a HEAD request to retrieve the content-type.
     - If the uri is a data url, then splits it into the parts and assigns them accordingly.
 */
-async function parseMetaData({ src }: IconMetaData): Promise<FileMetaData> {
+export async function parseMetaData({ src }: IconMetaData): Promise<FileMetaData> {
   let mimeType;
   let encodingString;
   let encoding: BufferEncoding;
@@ -37,7 +36,7 @@ async function parseMetaData({ src }: IconMetaData): Promise<FileMetaData> {
 /*
   Http fetch from url, throws errors to a higher level for handling, and skips the image.
 */
-async function fetchHttp(url: string): Promise<Buffer> {
+export async function fetchHttp(url: string): Promise<Buffer> {
   const response = await axios
     .get(url, {
       responseType: "arraybuffer",
@@ -53,13 +52,15 @@ async function fetchHttp(url: string): Promise<Buffer> {
 /*
   Handles the retrieval of the file either by GET or converting an encoded string to a buffer
 */
-async function getData(
+export async function getData(
   { src }: IconMetaData,
   { encoding, data }: FileMetaData
 ): Promise<Buffer> {
   if (isUri(src)) {
+    logger.info("parsing uri");
     return Buffer.from(data, encoding);
   } else if (isHttp(src)) {
+    logger.info(`fetching: ${src}`);
     return fetchHttp(src);
   }
 }
