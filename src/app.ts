@@ -45,7 +45,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 /**
  * API examples routes.
  */
-// app.get("/api", apiController.getApi);
+app.get("/api", apiController.getApi);
 app.post("/api", apiController.postApi);
 
 export default app;
