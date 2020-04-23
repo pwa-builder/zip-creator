@@ -474,7 +474,6 @@ In that file you'll find two sections:
 | bcrypt-nodejs     | Library for hashing and salting user passwords.            |
 | body-parser       | Express 4 middleware.                                      |
 | compression       | Express 4 middleware.                                      |
-| dotenv            | Loads environment variables from .env file.                |
 | errorhandler      | Express 4 middleware.                                      |
 | express           | Node.js web framework.                                     |
 | express-flash     | Provides flash messages for Express.                       |
