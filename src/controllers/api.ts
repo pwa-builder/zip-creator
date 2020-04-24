@@ -1,3 +1,4 @@
+import * as  http from "http";
 import * as fs from "fs";
 import archiver from "archiver";
 import * as path from "path";
@@ -12,10 +13,11 @@ const allowedOrigins = new Set([
   "localhost",
   "azure-express-zip-creator.azurewebsites.net"
 ]);
-function defaultHeaders(req: Request, res: Response) {
+function defaultHeaders(req: http.ClientRequestArgs & Request, res: Response) {
   res.set({
     "Access-Control-Allow-Methods": ["OPTIONS", "GET", "POST"],
-    "Access-Control-Allow-Origin": allowedOrigins.has(req.hostname) ? req.url : "",
+    "Access-Control-Allow-Headers": "*",
+    "Access-Control-Allow-Origin": allowedOrigins.has(req.hostname) ? req.headers.origin : "",
   });
 }
 
@@ -48,17 +50,16 @@ export const getApi = (req: Request, res: Response) => {
  */
 export const postApi = async (req: Request, res: Response) => {
   try {
+    defaultHeaders(req, res);
     if (!req.body) {
       res.status(400).json({ message: "no request body found" });
       return;
     } else if (!Array.isArray(req.body)) {
       res
         .status(400)
-        .json({ message: "no request body is not an array of objects" });
+        .json({ message: "request body is not an array of objects" });
       return;
     }
-
-    defaultHeaders(req, res);
 
     /*
       Create file and zip, set it up to stream files to,
