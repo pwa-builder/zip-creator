@@ -24,6 +24,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 /**
  * API examples routes.
  */
+app.options("/api", apiController.optionsApi);
 app.get("/api", apiController.getApi);
 app.post("/api", apiController.postApi);
 

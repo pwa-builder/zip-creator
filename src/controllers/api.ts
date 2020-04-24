@@ -5,11 +5,28 @@ import { Response, Request } from "express";
 import logger from "../util/logger";
 import hash from "../util/hash";
 import Zip from "../util/zip";
+
+function defaultHeaders(res: Response) {
+  res.set({
+    "Access-Control-Allow-Methods": ["OPTIONS", "GET", "POST"],
+    "Access-Control-Allow-Origin": ["http://pwabuilder.com", "https://pwabuilder.com", "https://localhost:3000"]
+  });
+}
+
+/**
+ * OPTIONS /api
+ */
+export const optionsApi = (req: Request, res: Response) => {
+  defaultHeaders(res);
+  res.sendStatus(200);
+};
+
 /**
  * GET /api
  * List of API examples.
  */
 export const getApi = (req: Request, res: Response) => {
+  defaultHeaders(res);
   res.status(200).json({});
 };
 
@@ -32,6 +49,8 @@ export const postApi = async (req: Request, res: Response) => {
       res.status(400).json({message:"no request body is not an array of objects"});
       return;
     }
+
+    defaultHeaders(res);
 
     /*
       Create file and zip, set it up to stream files to,
