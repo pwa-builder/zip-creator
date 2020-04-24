@@ -6,10 +6,11 @@ import logger from "../util/logger";
 import hash from "../util/hash";
 import Zip from "../util/zip";
 
-function defaultHeaders(res: Response) {
+const allowedOrigins = new Set(["http://pwabuilder.com", "https://pwabuilder.com", "https://localhost:3000", "http://localhost:3000"]);
+function defaultHeaders(req: Request, res: Response) {
   res.set({
     "Access-Control-Allow-Methods": ["OPTIONS", "GET", "POST"],
-    "Access-Control-Allow-Origin": ["http://pwabuilder.com", "https://pwabuilder.com", "https://localhost:3000", "http://localhost:3000"]
+    "Access-Control-Allow-Origin": allowedOrigins.has(req.url) ? req.url : ""
   });
 }
 
@@ -17,7 +18,7 @@ function defaultHeaders(res: Response) {
  * OPTIONS /api
  */
 export const optionsApi = (req: Request, res: Response) => {
-  defaultHeaders(res);
+  defaultHeaders(req, res);
   res.sendStatus(200);
 };
 
@@ -26,7 +27,7 @@ export const optionsApi = (req: Request, res: Response) => {
  * List of API examples.
  */
 export const getApi = (req: Request, res: Response) => {
-  defaultHeaders(res);
+  defaultHeaders(req, res);
   res.status(200).json({});
 };
 
@@ -50,7 +51,7 @@ export const postApi = async (req: Request, res: Response) => {
       return;
     }
 
-    defaultHeaders(res);
+    defaultHeaders(req, res);
 
     /*
       Create file and zip, set it up to stream files to,
