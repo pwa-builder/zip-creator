@@ -1,11 +1,18 @@
 import request from "supertest";
 import app from "../src/app";
 
-// describe("GET /api", () => {
-//   it("should return 200 OK", () => {
-//     return request(app).get("/api").expect(200);
-//   });
-// });
+
+describe("OPTION /api", () => {
+  it("should return 200 OK", () => {
+    return request(app).options("/api").expect(200);
+  });
+});
+
+describe("GET /api", () => {
+  it("should return 200 OK", () => {
+    return request(app).get("/api").expect(200);
+  });
+});
 
 describe("POST /api", () => {
   it("should return 400 on no body", () => {
