@@ -1,4 +1,5 @@
 import * as fs from "fs";
+import { URL } from "url";
 import archiver from "archiver";
 import * as path from "path";
 import { Response, Request } from "express";
@@ -6,11 +7,17 @@ import logger from "../util/logger";
 import hash from "../util/hash";
 import Zip from "../util/zip";
 
-const allowedOrigins = new Set(["http://pwabuilder.com", "https://pwabuilder.com", "https://localhost:3000", "http://localhost:3000"]);
+const allowedOrigins = new Set([
+  "pwabuilder.com",
+  "www.pwabuilder.com",
+  "localhost:3000",
+]);
 function defaultHeaders(req: Request, res: Response) {
+  const { host } = new URL(req.url);
+
   res.set({
     "Access-Control-Allow-Methods": ["OPTIONS", "GET", "POST"],
-    "Access-Control-Allow-Origin": allowedOrigins.has(req.url) ? req.url : ""
+    "Access-Control-Allow-Origin": allowedOrigins.has(host) ? req.url : "",
   });
 }
 
@@ -44,10 +51,12 @@ export const getApi = (req: Request, res: Response) => {
 export const postApi = async (req: Request, res: Response) => {
   try {
     if (!req.body) {
-      res.status(400).json({message:"no request body found"});
+      res.status(400).json({ message: "no request body found" });
       return;
     } else if (!Array.isArray(req.body)) {
-      res.status(400).json({message:"no request body is not an array of objects"});
+      res
+        .status(400)
+        .json({ message: "no request body is not an array of objects" });
       return;
     }
 
@@ -56,7 +65,9 @@ export const postApi = async (req: Request, res: Response) => {
     /*
       Create file and zip, set it up to stream files to,
     */
-    const rootPath = (process.cwd().endsWith("azure-express-zip-creator")) ? process.cwd(): path.resolve(__dirname, "../../");
+    const rootPath = process.cwd().endsWith("azure-express-zip-creator")
+      ? process.cwd()
+      : path.resolve(__dirname, "../../");
     const fileLoc = path.resolve(rootPath, "public", `${hash()}.zip`);
     logger.info(fileLoc);
     const zipStream = fs.createWriteStream(fileLoc);
@@ -84,9 +95,7 @@ export const postApi = async (req: Request, res: Response) => {
       if (!res.writableFinished) {
         res.download(fileLoc, "pwa_icon.zip", (err) => {
           if (err) {
-            res
-              .status(400)
-              .json({ message: "file failed to send"});
+            res.status(400).json({ message: "file failed to send" });
             logger.error(`file failed to send: ${err.message}`);
           }
         });
@@ -99,11 +108,11 @@ export const postApi = async (req: Request, res: Response) => {
     const fileCreated = await Zip.generate(archive, req.body);
 
     if (!fileCreated) {
-      res.status(400).json({message: "zip was not created"});
+      res.status(400).json({ message: "zip was not created" });
       logger.error("zip not created"); //, res);
     }
   } catch (error) {
-    res.status(500).json({message: "internal server error"});
+    res.status(500).json({ message: "internal server error" });
     logger.error("500 error path", res, error);
   }
 };
