@@ -3,6 +3,7 @@ import * as fs from "fs";
 import archiver from "archiver";
 import * as path from "path";
 import { Response, Request } from "express";
+import { PostBodyShape } from "./api-types";
 import logger from "../util/logger";
 import hash from "../util/hash";
 import Zip from "../util/zip";
@@ -48,13 +49,13 @@ export const getApi = (req: Request, res: Response) => {
  *  body: zipFile.zip
  * }
  */
-export const postApi = async (req: Request, res: Response) => {
+export const postApi = async (req: Request, res: Response & PostBodyShape) => {
   try {
     defaultHeaders(req, res);
     if (!req.body) {
       res.status(400).json({ message: "no request body found" });
       return;
-    } else if (!Array.isArray(req.body)) {
+    } else if (!Array.isArray(req.body.images)) {
       res
         .status(400)
         .json({ message: "request body is not an array of objects" });
@@ -104,7 +105,7 @@ export const postApi = async (req: Request, res: Response) => {
     /*
       Adding files to the zip.
     */
-    const fileCreated = await Zip.generate(archive, req.body);
+    const fileCreated = await Zip.generate(archive, req.body.images);
 
     if (!fileCreated) {
       res.status(400).json({ message: "zip was not created" });
