@@ -1,5 +1,4 @@
 import * as fs from "fs";
-import { URL } from "url";
 import archiver from "archiver";
 import * as path from "path";
 import { Response, Request } from "express";
@@ -10,14 +9,13 @@ import Zip from "../util/zip";
 const allowedOrigins = new Set([
   "pwabuilder.com",
   "www.pwabuilder.com",
-  "localhost:3000",
+  "localhost",
+  "azure-express-zip-creator.azurewebsites.net"
 ]);
 function defaultHeaders(req: Request, res: Response) {
-  const { host } = new URL(req.url);
-
   res.set({
     "Access-Control-Allow-Methods": ["OPTIONS", "GET", "POST"],
-    "Access-Control-Allow-Origin": allowedOrigins.has(host) ? req.url : "",
+    "Access-Control-Allow-Origin": allowedOrigins.has(req.hostname) ? req.url : "",
   });
 }
 
