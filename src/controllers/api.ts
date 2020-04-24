@@ -9,7 +9,7 @@ import Zip from "../util/zip";
 function defaultHeaders(res: Response) {
   res.set({
     "Access-Control-Allow-Methods": ["OPTIONS", "GET", "POST"],
-    "Access-Control-Allow-Origin": ["http://pwabuilder.com", "https://pwabuilder.com", "https://localhost:3000"]
+    "Access-Control-Allow-Origin": ["http://pwabuilder.com", "https://pwabuilder.com", "https://localhost:3000", "http://localhost:3000"]
   });
 }
 
