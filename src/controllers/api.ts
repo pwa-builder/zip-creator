@@ -11,7 +11,6 @@ import Zip from "../util/zip";
 const allowedOrigins = new Set([
   "pwabuilder.com",
   "www.pwabuilder.com",
-  "localhost",
   "azure-express-zip-creator.azurewebsites.net"
 ]);
 function defaultHeaders(req: http.ClientRequestArgs & Request, res: Response) {
