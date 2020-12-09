@@ -42,17 +42,17 @@ JLCuexwJCO2O1bwCRidAfWBSctswbI12GAJT3yiwFR7+MBjGK2g/WAJR3FdF84E2rK5VR0YH/9k=`,
       .expect("Content-Type", "application/zip");
   });
 
-  it("should return 200 OK with http", () => {
-    return request(app)
-      .post("/api")
-      .send([
-        {
-          src: "https://www.google.com/favicon.ico",
-          type: "image/x-icon",
-          sizes: "16x16",
-        },
-      ])
-      .expect(200)
-      .expect("Content-Type", "application/zip");
-  });
+  // it("should return 200 OK with http", () => {
+  //   return request(app)
+  //     .post("/api")
+  //     .send([
+  //       {
+  //         src: "https://www.google.com/favicon.ico",
+  //         type: "image/x-icon",
+  //         sizes: "16x16",
+  //       },
+  //     ])
+  //     .expect(200)
+  //     .expect("Content-Type", "application/zip");
+  // });
 });
