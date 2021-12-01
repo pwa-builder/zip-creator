@@ -8,10 +8,7 @@ import logger from "../util/logger";
 import hash from "../util/hash";
 import Zip from "../util/zip";
 import multer from "multer";
-import express from "express";
 
-const app = express();
-const upload = multer({ dest: "public/" });
 
 const allowedOrigins = new Set([
   "pwabuilder.com",
@@ -54,9 +51,8 @@ export const getApi = (req: Request, res: Response) => {
  *  body: zipFile.zip
  * }
  */
-export const postApi = app.post("/api", upload.array("files"), async function(req: Request, res: Response & PostBodyShape) {
-    // console.log("BODY:", req.body);
-    // console.log("FILES", req.files);
+ export const postApi = async (req: Request, res: Response & PostBodyShape) => {
+    console.log(req.files);
 
   try {
     defaultHeaders(req, res);
@@ -113,11 +109,9 @@ export const postApi = app.post("/api", upload.array("files"), async function(re
     /*
       Adding files to the zip.
     */
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const fileCreated = await Zip.generate(archive, req.files as any);
+    const fileCreated = await Zip.generate(archive, req.body.files);
 
     if (!fileCreated) {
-      console.log(req.files);
       res.status(400).json({ message: "zip was not created" });
       logger.error("zip not created"); //, res);
     }
@@ -125,4 +119,4 @@ export const postApi = app.post("/api", upload.array("files"), async function(re
     res.status(500).json({ message: "internal server error" });
     logger.error("500 error path", res, error);
   }
-});
+};
