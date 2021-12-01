@@ -51,15 +51,19 @@ export const getApi = (req: Request, res: Response) => {
  *  body: zipFile.zip
  * }
  */
- export const postApi = async (req: Request, res: Response & PostBodyShape) => {
-    console.log(req.files);
+export const postApi = async (req: Request, res: Response & PostBodyShape) => {
+  console.log(req.files);
+
+  // if (Array.isArray(req.files)) {
+  //   req.files[0].stream
+  // }
 
   try {
     defaultHeaders(req, res);
     if (!req.body) {
       res.status(400).json({ message: "no request body found" });
       return;
-    } else if (!req.files) { 
+    } else if (!req.files) {
       res
         .status(400)
         .json({ message: "request body is not an array of objects" });

@@ -9,6 +9,7 @@ import {
 } from "./zip-utils";
 import { IconMetaData, FileMetaData, supportedImageTypes } from "./zip-types";
 import logger from "./logger";
+import { request } from "http";
 /*
   Normalizes the data for easy consumption of the lower level.
     - If the uri is a http then makes a HEAD request to retrieve the content-type.
@@ -71,25 +72,25 @@ export async function getData(
 */
 export async function generate(
   zip: archiver.Archiver,
-  icons: IconMetaData[]
+  icons: Express.Multer.File[]
 ): Promise<boolean> {
   let index = 0;
   const length = icons.length;
   let count = 0;
   for (; index < length; index++) {
     try {
-      const metadata = icons[index];
-      const fileMetaData = await parseMetaData(metadata);
-      if (!supportedImageTypes.has(fileMetaData.mimeType)) {
+      const file = icons[index];
+      const mimeType = file.mimetype; // await parseMetaData(file);
+      if (!supportedImageTypes.has(mimeType)) {
         console.log("skipped");
         // console.log("skipped", fileMetaData, fileMetaData.mimeType);
         continue; // Skip if the mimeType is not supported
       }
 
-      const name = generateFilename(metadata, fileMetaData);
-      const file = await getData(metadata, fileMetaData);
+      const name = generateFilename(file, mimeType);
+      //const file = await getData(metadata, fileMetaData);
 
-      zip.append(file, { name });
+      zip.append(file.stream, { name });
       count++;
     } catch (err) {
       // ignore errors form other services for now

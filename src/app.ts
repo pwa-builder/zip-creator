@@ -1,6 +1,10 @@
 import express, { Response, Request } from "express";
 import compression from "compression"; // compresses requests
 import bodyParser from "body-parser";
+import multer from "multer";
+
+const upload = multer({ dest: "public/" });
+
 // import lusca from "lusca"
 
 // Controllers (route handlers)
@@ -26,6 +30,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
  */
 app.options("/api", apiController.optionsApi);
 app.get("/api", apiController.getApi);
-app.post("/api", apiController.postApi);
+app.post("/api", upload.array("images"), apiController.postApi);
 
 export default app;
