@@ -7,6 +7,11 @@ import { PostBodyShape } from "./api-types";
 import logger from "../util/logger";
 import hash from "../util/hash";
 import Zip from "../util/zip";
+import multer from "multer";
+import express from "express";
+
+const app = express();
+const upload = multer({ dest: "public/" });
 
 const allowedOrigins = new Set([
   "pwabuilder.com",
@@ -49,13 +54,16 @@ export const getApi = (req: Request, res: Response) => {
  *  body: zipFile.zip
  * }
  */
-export const postApi = async (req: Request, res: Response & PostBodyShape) => {
+export const postApi = app.post("/api", upload.array("files"), async function(req: Request, res: Response & PostBodyShape) {
+    // console.log("BODY:", req.body);
+    // console.log("FILES", req.files);
+
   try {
     defaultHeaders(req, res);
     if (!req.body) {
       res.status(400).json({ message: "no request body found" });
       return;
-    } else if (!Array.isArray(req.body.images)) {
+    } else if (!req.files) { 
       res
         .status(400)
         .json({ message: "request body is not an array of objects" });
@@ -105,9 +113,11 @@ export const postApi = async (req: Request, res: Response & PostBodyShape) => {
     /*
       Adding files to the zip.
     */
-    const fileCreated = await Zip.generate(archive, req.body.images);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const fileCreated = await Zip.generate(archive, req.files as any);
 
     if (!fileCreated) {
+      console.log(req.files);
       res.status(400).json({ message: "zip was not created" });
       logger.error("zip not created"); //, res);
     }
@@ -115,4 +125,4 @@ export const postApi = async (req: Request, res: Response & PostBodyShape) => {
     res.status(500).json({ message: "internal server error" });
     logger.error("500 error path", res, error);
   }
-};
+});
