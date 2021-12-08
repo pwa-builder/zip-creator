@@ -1,8 +1,21 @@
+import { Readable } from "stream";
+
 export interface IconMetaData {
-  src: string;
-  generated?: boolean;
-  type?: string;
-  sizes: string;
+  fieldname: string;
+  /** Name of the file on the uploader's computer. */
+  originalname: string;
+  encoding: string;
+  mimetype: string;
+  size: number;
+  stream: Readable;
+  /** `DiskStorage` only: Directory to which this file has been uploaded. */
+  destination: string;
+  /** `DiskStorage` only: Name of this file within `destination`. */
+  filename: string;
+  /** `DiskStorage` only: Full path to the uploaded file. */
+  path: string;
+  /** `MemoryStorage` only: A Buffer containing the entire file. */
+  buffer: Buffer;
 }
 
 export interface FileMetaData {

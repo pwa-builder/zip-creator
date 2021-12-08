@@ -2,8 +2,9 @@ import express, { Response, Request } from "express";
 import compression from "compression"; // compresses requests
 import bodyParser from "body-parser";
 import multer from "multer";
+import os from "os";
 
-const upload = multer({ dest: "public/" });
+const upload = multer({ dest: os.tmpdir() });
 
 // import lusca from "lusca"
 
@@ -14,7 +15,7 @@ import * as apiController from "./controllers/api";
 const app = express();
 
 // Express configuration
-app.set("port", process.env.PORT || 3000);
+app.set("port", process.env.PORT || 3001);
 app.use(compression());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));

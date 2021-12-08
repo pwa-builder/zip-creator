@@ -10,24 +10,25 @@ import {
 import { IconMetaData, FileMetaData, supportedImageTypes } from "./zip-types";
 import logger from "./logger";
 import { request } from "http";
+import { Readable } from "stream";
 /*
   Normalizes the data for easy consumption of the lower level.
     - If the uri is a http then makes a HEAD request to retrieve the content-type.
     - If the uri is a data url, then splits it into the parts and assigns them accordingly.
 */
-export async function parseMetaData({ src }: IconMetaData): Promise<FileMetaData> {
+export async function parseMetaData({ path }: IconMetaData): Promise<FileMetaData> {
   let mimeType;
   let encodingString;
   let encoding: BufferEncoding;
   let data;
 
-  if (isHttp(src)) {
-    const response = await axios.head(src);
+  if (isHttp(path)) {
+    const response = await axios.head(path);
     mimeType = response.headers["content-type"];
     encoding = "binary";
     data = null;
-  } else if (isUri(src)) {
-    [mimeType, encodingString, data] = uriElements(src);
+  } else if (isUri(path)) {
+    [mimeType, encodingString, data] = uriElements(path);
     encoding = encodingGuard(encodingString);
   }
 
@@ -54,16 +55,28 @@ export async function fetchHttp(url: string): Promise<Buffer> {
   Handles the retrieval of the file either by GET or converting an encoded string to a buffer
 */
 export async function getData(
-  { src }: IconMetaData,
+  { path }: IconMetaData,
   { encoding, data }: FileMetaData
 ): Promise<Buffer> {
-  if (isUri(src)) {
+  if (isUri(path)) {
     logger.info("parsing uri");
     return Buffer.from(data, encoding);
-  } else if (isHttp(src)) {
-    logger.info(`fetching: ${src}`);
-    return fetchHttp(src);
+  } else if (isHttp(path)) {
+    logger.info(`fetching: ${path}`);
+    return fetchHttp(path);
   }
+}
+
+function bufferToStream(binary: any) {
+
+  const readableInstanceStream = new Readable({
+    read() {
+      this.push(binary);
+      this.push(null);
+    }
+  });
+
+  return readableInstanceStream;
 }
 
 /*
@@ -80,18 +93,18 @@ export async function generate(
   for (; index < length; index++) {
     try {
       const file = icons[index];
-      const mimeType = file.mimetype; // await parseMetaData(file);
-      if (!supportedImageTypes.has(mimeType)) {
+      if (!supportedImageTypes.has(file.mimetype)) {
         console.log("skipped");
         // console.log("skipped", fileMetaData, fileMetaData.mimeType);
         continue; // Skip if the mimeType is not supported
       }
 
-      const name = generateFilename(file, mimeType);
+      const name = generateFilename(file, file.mimetype);
       //const file = await getData(metadata, fileMetaData);
 
-      zip.append(file.stream, { name });
+      zip.append(bufferToStream(file), { name });
       count++;
+      console.log("COUNT:", count);
     } catch (err) {
       // ignore errors form other services for now
       console.error(err);

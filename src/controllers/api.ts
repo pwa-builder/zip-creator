@@ -8,6 +8,7 @@ import logger from "../util/logger";
 import hash from "../util/hash";
 import Zip from "../util/zip";
 import multer from "multer";
+import os from "os";
 
 
 const allowedOrigins = new Set([
@@ -44,7 +45,7 @@ export const getApi = (req: Request, res: Response) => {
 /**
  * POST /api
  * req {
- *  body: IconMetadata[]
+ *  body:  Express.Multer.File[][]
  * }
  * res {
  *  status: statusCode
@@ -52,11 +53,6 @@ export const getApi = (req: Request, res: Response) => {
  * }
  */
 export const postApi = async (req: Request, res: Response & PostBodyShape) => {
-  console.log(req.files);
-
-  // if (Array.isArray(req.files)) {
-  //   req.files[0].stream
-  // }
 
   try {
     defaultHeaders(req, res);
@@ -76,7 +72,7 @@ export const postApi = async (req: Request, res: Response & PostBodyShape) => {
     const rootPath = process.cwd().endsWith("azure-express-zip-creator")
       ? process.cwd()
       : path.resolve(__dirname, "../../");
-    const fileLoc = path.resolve(rootPath, "public", `${hash()}.zip`);
+    const fileLoc = path.resolve(rootPath, os.tmpdir(), `${hash()}.zip`);
     logger.info(fileLoc);
     const zipStream = fs.createWriteStream(fileLoc);
     const archive = archiver("zip", {
@@ -113,8 +109,9 @@ export const postApi = async (req: Request, res: Response & PostBodyShape) => {
     /*
       Adding files to the zip.
     */
-    const fileCreated = await Zip.generate(archive, req.body.files);
-
+   
+    const fileCreated = await Zip.generate(archive, req.files as any);
+    console.log("FILE CREATED:", fileCreated);
     if (!fileCreated) {
       res.status(400).json({ message: "zip was not created" });
       logger.error("zip not created"); //, res);
