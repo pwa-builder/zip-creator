@@ -34,14 +34,19 @@ export enum SupportedTypes {
   msico = "image/vnd.microsoft.icon",
 }
 
-export enum FileExtensions {
-  "image/jpeg" = "jpeg",
-  "image/bmp" = "bmp",
-  "image/gif" = "git",
-  "image/png" = "png",
-  "image/webp" = "webp",
-  "image/x-icon" = "ico",
-  "image/vnd.microsoft.icon" = "ico",
-}
+export const FileExtensions = [
+  { type: "image/jpeg", extension: "jpg" },
+  { type: "image/bmp",  extension: "bmp" },
+  { type: "image/gif", extension: "git" },
+  { type: "image/png", extension: "png" },
+  { type: "image/webp", extension: "webp" },
+  { type: "image/x-icon", extension: "ico" },
+  { type: "image/vnd.microsoft.icon", extension: "ico" }
+];
 
-export const supportedImageTypes = new Set([...Object.keys(FileExtensions)]);
+export interface ManifestIcon  {
+  src?: string;
+  sizes?: string;
+  type?: string;
+}
+export const supportedImageTypes = new Set([...Object.values(SupportedTypes)]);

@@ -15,10 +15,11 @@ export function uriElements(uri: string): string[] {
 }
 
 export function generateFilename(
-  { size }: IconMetaData,
+  size: string,
   mimetype: string,
 ): string {
-  return `icon-${size}.${mimetype}`;
+  const fileType = FileExtensions.find(a => a.type === mimetype);
+  return `icon-${size}.${fileType.extension || "png"}`;
 }
 
 export function encodingGuard(encodingString: string): BufferEncoding {
