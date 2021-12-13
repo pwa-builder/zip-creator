@@ -7,6 +7,10 @@ import { PostBodyShape } from "./api-types";
 import logger from "../util/logger";
 import hash from "../util/hash";
 import Zip from "../util/zip";
+import multer from "multer";
+import os from "os";
+import { ManifestIcon } from "../util/zip-types";
+
 
 const allowedOrigins = new Set([
   "pwabuilder.com",
@@ -42,7 +46,7 @@ export const getApi = (req: Request, res: Response) => {
 /**
  * POST /api
  * req {
- *  body: IconMetadata[]
+ *  body:  Express.Multer.File[][]
  * }
  * res {
  *  status: statusCode
@@ -50,25 +54,22 @@ export const getApi = (req: Request, res: Response) => {
  * }
  */
 export const postApi = async (req: Request, res: Response & PostBodyShape) => {
+  const icons = JSON.parse(req.body.icons) as ManifestIcon[];
+  
   try {
     defaultHeaders(req, res);
-    if (!req.body) {
+    if (!req.body && !req.files) {
       res.status(400).json({ message: "no request body found" });
       return;
-    } else if (!Array.isArray(req.body.images)) {
-      res
-        .status(400)
-        .json({ message: "request body is not an array of objects" });
-      return;
-    }
-
+    };  
+    
     /*
       Create file and zip, set it up to stream files to,
     */
     const rootPath = process.cwd().endsWith("azure-express-zip-creator")
       ? process.cwd()
       : path.resolve(__dirname, "../../");
-    const fileLoc = path.resolve(rootPath, "public", `${hash()}.zip`);
+    const fileLoc = path.resolve(rootPath, os.tmpdir(), `${hash()}.zip`);
     logger.info(fileLoc);
     const zipStream = fs.createWriteStream(fileLoc);
     const archive = archiver("zip", {
@@ -105,7 +106,8 @@ export const postApi = async (req: Request, res: Response & PostBodyShape) => {
     /*
       Adding files to the zip.
     */
-    const fileCreated = await Zip.generate(archive, req.body.images);
+   
+    const fileCreated = await Zip.generate(archive, req.files as any, icons);
 
     if (!fileCreated) {
       res.status(400).json({ message: "zip was not created" });
@@ -116,3 +118,5 @@ export const postApi = async (req: Request, res: Response & PostBodyShape) => {
     logger.error("500 error path", res, error);
   }
 };
+
+

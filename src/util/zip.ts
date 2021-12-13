@@ -7,26 +7,29 @@ import {
   generateFilename,
   encodingGuard,
 } from "./zip-utils";
-import { IconMetaData, FileMetaData, supportedImageTypes } from "./zip-types";
+import { IconMetaData, FileMetaData, supportedImageTypes, ManifestIcon} from "./zip-types";
 import logger from "./logger";
+import { request } from "http";
+import { Readable } from "stream";
+
 /*
   Normalizes the data for easy consumption of the lower level.
     - If the uri is a http then makes a HEAD request to retrieve the content-type.
     - If the uri is a data url, then splits it into the parts and assigns them accordingly.
 */
-export async function parseMetaData({ src }: IconMetaData): Promise<FileMetaData> {
+export async function parseMetaData({ path }: IconMetaData): Promise<FileMetaData> {
   let mimeType;
   let encodingString;
   let encoding: BufferEncoding;
   let data;
 
-  if (isHttp(src)) {
-    const response = await axios.head(src);
+  if (isHttp(path)) {
+    const response = await axios.head(path);
     mimeType = response.headers["content-type"];
     encoding = "binary";
     data = null;
-  } else if (isUri(src)) {
-    [mimeType, encodingString, data] = uriElements(src);
+  } else if (isUri(path)) {
+    [mimeType, encodingString, data] = uriElements(path);
     encoding = encodingGuard(encodingString);
   }
 
@@ -45,6 +48,10 @@ export async function fetchHttp(url: string): Promise<Buffer> {
       throw err;
     });
 
+    if(response.status !== 200) {
+      throw new Error(`status code: ${response.status}`);
+    };
+
   // Success path
   return Buffer.from(response.data, "binary");
 }
@@ -53,17 +60,18 @@ export async function fetchHttp(url: string): Promise<Buffer> {
   Handles the retrieval of the file either by GET or converting an encoded string to a buffer
 */
 export async function getData(
-  { src }: IconMetaData,
+  { path }: IconMetaData,
   { encoding, data }: FileMetaData
 ): Promise<Buffer> {
-  if (isUri(src)) {
+  if (isUri(path)) {
     logger.info("parsing uri");
     return Buffer.from(data, encoding);
-  } else if (isHttp(src)) {
-    logger.info(`fetching: ${src}`);
-    return fetchHttp(src);
+  } else if (isHttp(path)) {
+    logger.info(`fetching: ${path}`);
+    return fetchHttp(path);
   }
 }
+
 
 /*
   Generates the zip file and passes back the archive reference to pipe to the attachment.
@@ -71,34 +79,48 @@ export async function getData(
 */
 export async function generate(
   zip: archiver.Archiver,
-  icons: IconMetaData[]
+  encodedIconsBinary: Express.Multer.File[],
+  icons: ManifestIcon[],
 ): Promise<boolean> {
-  let index = 0;
-  const length = icons.length;
   let count = 0;
-  for (; index < length; index++) {
-    try {
-      const metadata = icons[index];
-      const fileMetaData = await parseMetaData(metadata);
-      if (!supportedImageTypes.has(fileMetaData.mimeType)) {
-        console.log("skipped");
-        // console.log("skipped", fileMetaData, fileMetaData.mimeType);
-        continue; // Skip if the mimeType is not supported
-      }
+  const encodedIcons = icons.filter(icon => icon.src.includes("data:image"));
+  const urlBasedIcons = icons.filter(icon => !icon.src.includes("data:image"));
 
-      const name = generateFilename(metadata, fileMetaData);
-      const file = await getData(metadata, fileMetaData);
+  try {
+    if(icons.length > 0) {
+      for (let index = 0; index < urlBasedIcons.length; index++) {
+        const image = icons[index];
+          if (!supportedImageTypes.has(image.type as any)) {
+            console.log("skipped");
+            // Skip if the mimeType is not supported
+            continue;
+          }
+          
+          const buffer = await fetchHttp(image.src);
 
-      zip.append(file, { name });
-      count++;
-    } catch (err) {
-      // ignore errors form other services for now
-      console.error(err);
-      continue;
+          const name = generateFilename(image.sizes, image.type);
+          zip.append(buffer, {name});
+        
+          count++;
+      };
+    };
+    for (let index = 0; index < encodedIconsBinary.length; index++) {
+        const file = encodedIconsBinary[index];
+        const icon = encodedIcons[index];
+        if (!supportedImageTypes.has(icon.type as any)) {
+          console.log("skipped");
+          continue; // Skip if the mimeType is not supported
+        }
+        
+        const name = generateFilename(icon.sizes, icon.type);
+        zip.file(file.path, {name}); 
+        count++;
     }
-  }
-
-  zip.finalize();
+ } catch (err) {
+  // ignore errors form other services for now
+  console.error(err);
+}
+  await zip.finalize();
 
   if (count > 0) {
     return true;
