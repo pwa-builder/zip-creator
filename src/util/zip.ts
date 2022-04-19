@@ -105,6 +105,7 @@ export async function generate(
             image.type = constructedType;
           }
           if (!supportedImageTypes.has(image.type as any)) {
+            console.log("skipped");
             // Skip if the mimeType is not supported
             continue;
           }

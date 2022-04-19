@@ -56,10 +56,3 @@ JLCuexwJCO2O1bwCRidAfWBSctswbI12GAJT3yiwFR7+MBjGK2g/WAJR3FdF84E2rK5VR0YH/9k=`,
   //     .expect("Content-Type", "application/zip");
   // });
 });
-
-/* const im = [
-  {"src":"https://webboard.app/icons/android/android-launchericon-64-64.png","sizes":"64x64"},
-  {"src":"https://webboard.app/icons/android/maskable_icon_192.png","sizes":"192x192","purpose":"maskable"},
-  {"src":"https://webboard.app/icons/android/android-launchericon-48-48.png","sizes":"48x48"},
-  {"src":"https://webboard.app/icons/android/android-launchericon-512-512.png","sizes":"512x512"},
-  {"src":"https://webboard.app/icons/android/android-launchericon-28-28.png","sizes":"28x28"}]; */
