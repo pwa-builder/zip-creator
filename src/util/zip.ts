@@ -101,7 +101,11 @@ export async function generate(
             const splitSrc = image.src.split("/");
             const imageName = splitSrc[splitSrc.length - 1];
             const splitName = imageName.split(".");
-            const constructedType = "image/" + splitName[splitName.length - 1];
+            let extension = splitName[splitName.length - 1];
+            if(extension === "jpg"){
+              extension = "jpeg";
+            }
+            const constructedType = "image/" + extension;
             image.type = constructedType;
           }
           if (!supportedImageTypes.has(image.type as any)) {
