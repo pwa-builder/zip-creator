@@ -91,8 +91,20 @@ export async function generate(
     if(icons.length > 0) {
       for (let index = 0; index < urlBasedIcons.length; index++) {
         const image = icons[index];
+        
+          /*
+           if the user does not have a image.type set for each icon
+           we can create their types for them from the file extension
+           they have on the image.src.
+          */
+          if(!image.type){
+            const splitSrc = image.src.split("/");
+            const imageName = splitSrc[splitSrc.length - 1];
+            const splitName = imageName.split(".");
+            const constructedType = "image/" + splitName[splitName.length - 1];
+            image.type = constructedType;
+          }
           if (!supportedImageTypes.has(image.type as any)) {
-            console.log("skipped");
             // Skip if the mimeType is not supported
             continue;
           }
