@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "archiver": "^4.0.1",
-    "axios": "^0.19.2",
+    "axios": "^0.21.2",
     "body-parser": "^1.19.0",
     "compression": "^1.7.4",
     "errorhandler": "^1.5.1",
