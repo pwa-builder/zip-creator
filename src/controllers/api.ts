@@ -15,7 +15,6 @@ import { ManifestIcon } from "../util/zip-types";
 const allowedOrigins = new Set([
   "pwabuilder.com",
   "www.pwabuilder.com",
-  "localhost",
   "azure-express-zip-creator.azurewebsites.net"
 ]);
 function defaultHeaders(req: http.ClientRequestArgs & Request, res: Response) {
