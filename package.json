@@ -60,7 +60,7 @@
     "eslint": "^6.4.0",
     "jest": "^24.9.0",
     "multer": "^1.4.3",
-    "nodemon": "^1.19.2",
+    "nodemon": "^3.0.1",
     "supertest": "^4.0.2",
     "ts-node": "^8.4.1",
     "typescript": "^3.6.3"
